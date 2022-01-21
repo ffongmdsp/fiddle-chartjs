@@ -13,26 +13,13 @@ for (let f = 0; f < 2000; f++) {
   }
 }
 
-const sinePtRadiusCb = (context) => {
-  console.log(`Dataset Index: ${context.datasetIndex}`);
-  console.log(`Data Index: ${context.dataIndex}`);
-  return 0;
-  let val = context.dataset[context.datasetIndex].data[dataIndex]
-  if (val === 1 || val === -1) {
-    return 5;
-  }
-  else {
-    return 0;
-  }
-};
-
 const data = {
   datasets: [
     { 
       label: 'Sine',
       data: sineWavePts,
       parsing: false,
-      pointRadius: sinePtRadius,
+      pointRadius: null,
       borderColor: '#20639b',
       spanGaps: true,
       pointHitRadius: 10,
@@ -88,4 +75,4 @@ const config = {
 };
 
 
-window.electron.createChart('myChart', config);
+window.electron.createChart('myChart', config, config.data.datasets[0], 'pointRadius', 0);
