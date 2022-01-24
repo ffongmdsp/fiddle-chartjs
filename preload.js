@@ -82,6 +82,20 @@ let ctrlPtDragData = {
   }
 };
 
+const onHover = (evt, activeElements, chart) => {
+  let cursor = 'default';
+  if (activeElements.length > 0) {
+    let elem = activeElements[0];
+    console.log(`onHover at dataset ${elem.datasetIndex} dataIdx ${elem.index}`);
+    let value = myChart.data.datasets[elem.datasetIndex].data[elem.index];
+    if (value.y === 1 || value.y === -1) {
+      cursor = 'grab';
+    }
+  }
+  console.log(evt.native.target);
+  evt.native.target.style.cursor = cursor;
+};
+
 let scriptableFuncs = [ onCtrlPtRadius, ctrlPtDragData ];
 
 let electronCtxBridgeFuncs = {
@@ -92,6 +106,7 @@ let electronCtxBridgeFuncs = {
         scriptables[i][scriptables[i+1]] = scriptableFuncs[funcIdx];
       }
       let ctx = document.getElementById(canvasId);
+      params.options.onHover = onHover;
       myChart = new Chart(ctx, params);
     },
 };
