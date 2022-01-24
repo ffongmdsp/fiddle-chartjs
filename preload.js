@@ -22,39 +22,63 @@ const dragDataPlugin = require('chartjs-plugin-dragdata');
 let onCtrlPtRadius = (context) => {
   //console.log(`Dataset Index: ${context.datasetIndex}`);
   //console.log(`Data Index: ${context.dataIndex}`);
-  console.log(`onCtrlPtRadius: ${context.dataIndex}`);
+  //console.log(`onCtrlPtRadius: ${context.dataIndex}`);
   let val = context.dataset.data[context.dataIndex].y;
-  console.log(`onCtrlPtRadius: val = ${val}`);
+  //console.log(`onCtrlPtRadius: val = ${val}`);
   if (val === -1 || val === 1) {
     return 5;
   }
   return 0;
 }
 
+let myChart;
+let dataAtDragStart;
+
 let ctrlPtDragData = {
   round: 3,
   showTooltip: true,
   dragX: true,
   onDragStart: (evt, datasetIndex, index, value) => {
-    console.log('onDragStart no argument');
-    console.log(`onDragStart: ${value.x}, ${value.y}`);
+    console.log(`onDragStart: ${value.x}, ${value.y}, dsIndex: ${datasetIndex}`);
     if (value.y === 1 || value.y === -1) {
+      evt.target.style.cursor = 'grabbing';
+      let ds = myChart.data.datasets[datasetIndex];
+      console.log(`onDragStart: data length ${ds.data.length}`);
+      dataAtDragStart = ds.data.map(val => 
+        {
+            aCopy = {
+                x: val.x, 
+                y: val.y
+            }
+            return aCopy;
+        });
+      console.log(`onDragStart: dataAtDragStart length ${dataAtDragStart.length}`);
+      console.log(`onDragStart: dataAtDragStart @ ${index} = ${dataAtDragStart[index].x}, ${dataAtDragStart[index].y}`);
       return true;
     }
     return false;
   },
   onDrag: (evt, datasetIndex, index, value) => {
     evt.target.style.cursor = 'grabbing';
-      console.log('onDrag no argument');
-
-    console.log(`onDrag: ${value.x}, ${value.y}`);
-
+    console.log(`onDrag: ${value.x}, ${value.y}; index: ${index}; dataAtDragStart length ${dataAtDragStart.length}`);
+    let offset = { x: value.x - dataAtDragStart[index].x, y: value.y - dataAtDragStart[index].y };
+    console.log(`onDrag: offset: ${offset.x}, ${offset.y}`);
+    let ds = myChart.data.datasets[datasetIndex];
+    ds.data.forEach((dataPt, dataIdx) => {
+      dataPt.x = dataAtDragStart[dataIdx].x + offset.x;
+      dataPt.y = dataAtDragStart[dataIdx].y + offset.y;
+    });
+    myChart.update();
   },
   onDragEnd: (evt, datasetIndex, index, value) => {
     evt.target.style.cursor = 'default';
-        console.log('onDragEnd no argument');
-
     console.log(`onDragEnd: ${value.x}, ${value.y}`);
+    let ds = myChart.data.datasets[datasetIndex];
+    ds.data.forEach((dataPt, dataIdx) => {
+      dataPt.x = dataAtDragStart[dataIdx].x;
+      dataPt.y = dataAtDragStart[dataIdx].y;
+    });
+    myChart.update();
   }
 };
 
@@ -68,7 +92,7 @@ let electronCtxBridgeFuncs = {
         scriptables[i][scriptables[i+1]] = scriptableFuncs[funcIdx];
       }
       let ctx = document.getElementById(canvasId);
-      let chart = new Chart(ctx, params);
+      myChart = new Chart(ctx, params);
     },
 };
 
