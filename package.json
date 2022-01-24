@@ -10,7 +10,8 @@
     "start": "electron ."
   },
   "dependencies": {
-    "chart.js": "*"
+    "chart.js": "*",
+    "chartjs-plugin-dragdata": "*"
   },
   "devDependencies": {
     "electron": "13.1.3"

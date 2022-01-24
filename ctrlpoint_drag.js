@@ -67,7 +67,8 @@ const config = {
          borderWidth: 2,
          drawLine: false,
        }
-     }
+     },
+     dragData: null
     }
   },
   plugins: [
@@ -75,4 +76,6 @@ const config = {
 };
 
 
-window.electron.createChart('myChart', config, config.data.datasets[0], 'pointRadius', 0);
+window.electron.createChart('myChart', config, 
+  config.data.datasets[0], 'pointRadius', 0,
+  config.options.plugins, 'dragData', 1);
