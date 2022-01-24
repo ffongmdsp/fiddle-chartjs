@@ -19,6 +19,13 @@ contextBridge.exposeInMainWorld(
     {
         createChart: (canvasId, params) => {
           let ctx = document.getElementById(canvasId);
+          /*
+          params.options.plugins.tooltip = {
+            filter: (ctx) => {
+              return true; // display tooltips from all datasets
+            }
+          };
+          */
           let chart = new Chart(ctx, params);
         }
     }
